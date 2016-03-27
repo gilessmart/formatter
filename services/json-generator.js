@@ -1,101 +1,100 @@
-angular.module('formatter')
-    .service('JsonGenerator', ['IndentGenerator', function (indentGenerator) {
-        this.getJson = function (parsedObject, indentAmount) {
-            var result = '';
+formatter.services.JsonGenerator = function (indentGenerator) {
+    this.getJson = function (parsedObject, indentAmount) {
+        var result = '';
 
-            if (Array.isArray(parsedObject)) {
-                result += getArrayJson(parsedObject, 0, indentAmount);
-            }
-            else {
-                result += getObjectJson(parsedObject, 0, indentAmount);
-            }
-
-            return result;
-        };
-
-        function getObjectJson (object, indentLevel, indentAmount) {
-            var result = '';
-
-            if (Object.keys(object).length) {
-                result += '{\n';
-
-                Object.keys(object).forEach(function (key, index, keys) {
-                    result += indentGenerator.getIndent(indentLevel + 1, indentAmount) + '"' + jsonEncode(key) + '": ';
-                    result += getPropertyValue(object[key], indentLevel, indentAmount);
-
-                    if (index < keys.length - 1) {
-                        result += ',';
-                    }
-
-                    result += '\n';
-                });
-
-                result += indentGenerator.getIndent(indentLevel, indentAmount) + '}';
-            }
-            else {
-                result += '{}';
-            }
-
-            return result;
+        if (Array.isArray(parsedObject)) {
+            result += getArrayJson(parsedObject, 0, indentAmount);
+        }
+        else {
+            result += getObjectJson(parsedObject, 0, indentAmount);
         }
 
-        function getArrayJson (value, indentLevel, indentAmount) {
-            var result = '',
-                i;
+        return result;
+    };
 
-            if (value.length) {
-                result += '[\n';
+    function getObjectJson (object, indentLevel, indentAmount) {
+        var result = '';
 
-                for (i = 0; i < value.length; i++) {
-                    result += indentGenerator.getIndent(indentLevel + 1, indentAmount);
-                    result += getPropertyValue(value[i], indentLevel, indentAmount);
+        if (Object.keys(object).length) {
+            result += '{\n';
 
-                    if (i < value.length - 1) {
-                        result += ',';
-                    }
+            Object.keys(object).forEach(function (key, index, keys) {
+                result += indentGenerator.getIndent(indentLevel + 1, indentAmount) + '"' + jsonEncode(key) + '": ';
+                result += getPropertyValue(object[key], indentLevel, indentAmount);
 
-                    result += '\n';
+                if (index < keys.length - 1) {
+                    result += ',';
                 }
 
-                result += indentGenerator.getIndent(indentLevel, indentAmount) + ']';
-            }
-            else {
-                result += '[]';
-            }
+                result += '\n';
+            });
 
-            return result;
+            result += indentGenerator.getIndent(indentLevel, indentAmount) + '}';
+        }
+        else {
+            result += '{}';
         }
 
-        function getPropertyValue(value, indentLevel, indentAmount) {
-            var result = '';
+        return result;
+    }
 
-            switch (typeof value) {
-                case 'boolean':
-                    result += value ? 'true' : 'false';
-                    break;
-                case 'number':
-                    result += value;
-                    break;
-                case 'string':
-                    result += '"' + jsonEncode(value) + '"';
-                    break;
-                case 'object':
-                    if (!value) {
-                        result += 'null';
-                    }
-                    else if (Array.isArray(value)) {
-                        result += getArrayJson(value, indentLevel + 1, indentAmount);
-                    }
-                    else {
-                        result += getObjectJson(value, indentLevel + 1, indentAmount);
-                    }
-                    break;
+    function getArrayJson (value, indentLevel, indentAmount) {
+        var result = '',
+            i;
+
+        if (value.length) {
+            result += '[\n';
+
+            for (i = 0; i < value.length; i++) {
+                result += indentGenerator.getIndent(indentLevel + 1, indentAmount);
+                result += getPropertyValue(value[i], indentLevel, indentAmount);
+
+                if (i < value.length - 1) {
+                    result += ',';
+                }
+
+                result += '\n';
             }
 
-            return result;
+            result += indentGenerator.getIndent(indentLevel, indentAmount) + ']';
+        }
+        else {
+            result += '[]';
         }
 
-        function jsonEncode (input) {
-            return input.replace(/"/g, '\\"');
+        return result;
+    }
+
+    function getPropertyValue(value, indentLevel, indentAmount) {
+        var result = '';
+
+        switch (typeof value) {
+            case 'boolean':
+                result += value ? 'true' : 'false';
+                break;
+            case 'number':
+                result += value;
+                break;
+            case 'string':
+                result += '"' + jsonEncode(value) + '"';
+                break;
+            case 'object':
+                if (!value) {
+                    result += 'null';
+                }
+                else if (Array.isArray(value)) {
+                    result += getArrayJson(value, indentLevel + 1, indentAmount);
+                }
+                else {
+                    result += getObjectJson(value, indentLevel + 1, indentAmount);
+                }
+                break;
         }
-    }]);
+
+        return result;
+    }
+
+    function jsonEncode (input) {
+        return input.replace(/"/g, '\\"');
+    }
+};

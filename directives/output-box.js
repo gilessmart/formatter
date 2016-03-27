@@ -1,31 +1,30 @@
-angular.module('formatter')
-    .directive('outputBox', function() {
-        return {
-            scope: {
-                output: '='
-            },
-            templateUrl: 'views/output-box.html',
-            link: function (scope, element, attributes) {
-                var outputElement = element[0].querySelector('pre'),
-                    selection;
+formatter.directives.outputBox = function() {
+    return {
+        scope: {
+            output: '='
+        },
+        templateUrl: 'views/output-box.html',
+        link: function (scope, element, attributes) {
+            var outputElement = element[0].querySelector('pre'),
+                selection;
 
-                scope.model = {};
+            scope.model = {};
 
-                scope.$watch('output', function (output) {
-                    if (output) {
-                        var formattedHtml = hljs.highlightAuto(output).value;
+            scope.$watch('output', function (output) {
+                if (output) {
+                    var formattedHtml = hljs.highlightAuto(output).value;
 
-                        outputElement.innerHTML = formattedHtml;
-                    }
-                });
+                    outputElement.innerHTML = formattedHtml;
+                }
+            });
 
-                if (typeof window.getSelection === 'function') {
-                    selection = window.getSelection();
+            if (typeof window.getSelection === 'function') {
+                selection = window.getSelection();
 
-                    scope.selectAll = function () {
-                        selection.selectAllChildren(outputElement);
-                    }
+                scope.selectAll = function () {
+                    selection.selectAllChildren(outputElement);
                 }
             }
-        };
-    });
+        }
+    };
+};
